@@ -1,4 +1,10 @@
+import Foundation
+
 public extension String {
+    
+    var withoutSpecialCharacters: String {
+        return self.components(separatedBy: CharacterSet.symbols).joined(separator: "")
+    }
    
     func indexIntFromStart(char: Character) -> Int? {
         return firstIndex(of: char)?.utf16Offset(in: self)
@@ -43,5 +49,9 @@ public extension String {
         
         return strArr
     }
+    
+  
+    
+    
     
 }
