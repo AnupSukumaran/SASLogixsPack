@@ -1,9 +1,33 @@
 import Foundation
+import UIKit
 
 public extension String {
+
     
     var withoutSpecialCharacters: String {
         return self.components(separatedBy: CharacterSet.symbols).joined(separator: "")
+    }
+    
+    func convertHTMLStrToNSAttStr(font: UIFont? = nil) -> NSAttributedString?{
+        do {
+            let newDesc = self.data(using: .unicode, allowLossyConversion: true)!
+            let attrStr = try NSAttributedString(data: newDesc, options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil)
+            
+            if let font = font {
+                let mutableAttrStr = NSMutableAttributedString(attributedString: attrStr)
+                var attrs = attrStr.attributes(at: 0, effectiveRange: nil)
+                attrs[NSAttributedString.Key.font] = font
+                mutableAttrStr.setAttributes(attrs, range: NSRange(location: 0, length: mutableAttrStr.length))
+                let newAttrStr = NSAttributedString(attributedString: mutableAttrStr)
+                return newAttrStr
+//                self.init(attributedString: attr)
+            } 
+            
+            return attrStr
+            
+        } catch {
+            return nil
+        }
     }
    
     func indexIntFromStart(char: Character) -> Int? {
