@@ -1,5 +1,7 @@
 import Foundation
+#if !os(macOS)
 import UIKit
+#endif
 
 public extension String {
 
