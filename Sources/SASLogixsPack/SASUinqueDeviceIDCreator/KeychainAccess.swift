@@ -6,14 +6,27 @@
 //  Copyright © 2020 Manu Puthoor. All rights reserved.
 //
 
+//
+//  KeychainAccess.swift
+//  UUIDTest
+//
+//  Created by Manu Puthoor on 22/06/20.
+//  Copyright © 2020 Manu Puthoor. All rights reserved.
+//
+
 import Foundation
+
+enum KeychainAccessError: Error {
+    case unableToLoad
+    case errorParsingKeychainResult
+}
 
 public class KeychainAccess {
 
     public func addKeychainData(itemKey: String, itemValue: String) throws {
         
         guard let valueData = itemValue.data(using: .utf8) else {
-            print("Keychain: Unable to store data, invalid input - key: \(itemKey), value: \(itemValue)")
+           // Logger.p("Keychain: Unable to store data, invalid input - key: \(itemKey), value: \(itemValue)")
             return
         }
 
@@ -21,7 +34,7 @@ public class KeychainAccess {
         do {
             try deleteKeychainData(itemKey: itemKey)
         } catch {
-            print("Keychain: nothing to delete...")
+           // print("Keychain: nothing to delete...")
         }
 
         let queryAdd: [String: AnyObject] = [
@@ -31,14 +44,12 @@ public class KeychainAccess {
             kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked
         ]
         
-        print("queryAdd = \(queryAdd)")
-        
         let resultCode: OSStatus = SecItemAdd(queryAdd as CFDictionary, nil)
 
         if resultCode != 0 {
-            print("Keychain: value not added - Error: \(resultCode)")
+            //Logger.p("Keychain: value not added - Error: \(resultCode)")
         } else {
-            print("Keychain: value added successfully")
+           // Logger.p("Keychain: value added successfully")
         }
     }
 
@@ -51,9 +62,9 @@ public class KeychainAccess {
         let resultCodeDelete = SecItemDelete(queryDelete as CFDictionary)
 
         if resultCodeDelete != 0 {
-            print("Keychain: unable to delete from keychain: \(resultCodeDelete)")
+           // Logger.p("Keychain: unable to delete from keychain: \(resultCodeDelete)")
         } else {
-            print("Keychain: successfully deleted item")
+           // Logger.p("Keychain: successfully deleted item")
         }
     }
 
@@ -67,20 +78,24 @@ public class KeychainAccess {
         ]
         
         var result: AnyObject?
+        
         let resultCodeLoad = withUnsafeMutablePointer(to: &result) {
             SecItemCopyMatching(queryLoad as CFDictionary, UnsafeMutablePointer($0))
         }
 
         if resultCodeLoad != 0 {
-            print("Keychain: unable to load data - \(resultCodeLoad)")
-            return nil
+           // Logger.p("Keychain: unable to load data - \(resultCodeLoad)")
+            
+            throw KeychainAccessError.unableToLoad
         }
+        
 
         guard let resultVal = result as? NSData, let keyValue = NSString(data: resultVal as Data, encoding: String.Encoding.utf8.rawValue) as String? else {
-            print("Keychain: error parsing keychain result - \(resultCodeLoad)")
-            return nil
+            //Logger.p("Keychain: error parsing keychain result - \(resultCodeLoad)")
+            throw KeychainAccessError.errorParsingKeychainResult
         }
         
         return keyValue
     }
 }
+
