@@ -61,7 +61,7 @@ public extension UIAlertController {
 
     }
     
-    func showSuperAlertView(title: String? = nil, message: String,actionTitles: [String], actions: [() -> ()]?) {
+    func showSuperAlertView(title: String? = nil, message: String,actionTitles: [String], actions: [(() -> ())?]?) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         for (i, title) in actionTitles.enumerated() {
@@ -69,7 +69,10 @@ public extension UIAlertController {
             let action = UIAlertAction(title: title, style: .default) { (state) in
                 if let acts = actions {
                     if acts.count >= actionTitles.count {
-                        acts[i]()
+                        if let a = acts[i] {
+                            a()
+                        }
+                       
                     }
                 }
             }
@@ -79,6 +82,10 @@ public extension UIAlertController {
         
         alert.show()
         
+    }
+    
+    static func removeSASSuperAlert() {
+        UIAlertController.alertWindow.isHidden = true
     }
     
 
