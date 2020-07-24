@@ -8,6 +8,11 @@
 import Foundation
 
 public class SASDispatchGrp {
+    
+    public var group = DispatchGroup()
+    
+    public init() {}
+    
     public static func setDispatchGrp(comp: @escaping (_ group: DispatchGroup) -> (), groupComp: @escaping () -> ()) {
         let group = DispatchGroup()
         comp(group)
