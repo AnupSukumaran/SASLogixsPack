@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+import UIKit
 // usage -
 //SOME_IMAGE_VIEW.image = UIImage(named: "IMAGE NAME")?.maskWithColor(color: .white)
 //used if the rendering does not work in ios 12 .ie , if the image color does not change even if the tint color is altered. 
